@@ -27,10 +27,10 @@ class OrdersScreen extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: o.$4.withValues(alpha: 0.12),
+                  color: o.$5.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.inventory_2_rounded, color: o.$4, size: 22),
+                child: Icon(Icons.inventory_2_rounded, color: o.$5, size: 22),
               ),
               title: Text(o.$1, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w700, fontSize: 14)),
               subtitle: Column(
@@ -39,7 +39,7 @@ class OrdersScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(o.$2, style: const TextStyle(fontSize: 12)),
                   const SizedBox(height: 2),
-                  Text(o.$3, style: TextStyle(fontSize: 11, color: o.$4, fontWeight: FontWeight.w600)),
+                  Text(o.$3, style: TextStyle(fontSize: 11, color: o.$5, fontWeight: FontWeight.w600)),
                 ],
               ),
               trailing: Text(o.$4, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
