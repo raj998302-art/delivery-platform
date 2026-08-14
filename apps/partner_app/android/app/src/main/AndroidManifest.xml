@@ -32,13 +32,5 @@
             </intent-filter>
         </activity>
         <meta-data android:name="flutterEmbedding" android:value="2" />
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="${GOOGLE_MAPS_API_KEY}" />
-
-        <!-- Foreground service for location tracking while on delivery -->
-        <service
-            android:name="com.lyokam.location foreground.LocationForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location" />
     </application>
 </manifest>
