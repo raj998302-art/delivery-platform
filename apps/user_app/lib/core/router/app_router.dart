@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../features/auth/login_screen.dart';
-import '../features/home/home_screen.dart';
-import '../features/onboarding/onboarding_screen.dart';
-import '../features/booking/booking_screen.dart';
-import '../features/tracking/tracking_screen.dart';
-import '../features/orders/orders_screen.dart';
-import '../features/profile/profile_screen.dart';
-import '../features/splash/splash_screen.dart';
+import '../../features/splash/splash_screen.dart';
+import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/auth/login_screen.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/booking/booking_screen.dart';
+import '../../features/tracking/tracking_screen.dart';
+import '../../features/orders/orders_screen.dart';
+import '../../features/profile/profile_screen.dart';
 import '../constants/app_constants.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {

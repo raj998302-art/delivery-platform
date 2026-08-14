@@ -69,6 +69,10 @@ jobs:
         working-directory: apps/${{ matrix.app }}
         run: flutter create . --platforms=android --org com.delivery --project-name ${{ matrix.app }}
 
+      - name: Remove auto-generated widget_test.dart (references MyApp which doesn't exist)
+        working-directory: apps/${{ matrix.app }}
+        run: rm -f test/widget_test.dart
+
       - name: Install dependencies
         working-directory: apps/${{ matrix.app }}
         run: flutter pub get
