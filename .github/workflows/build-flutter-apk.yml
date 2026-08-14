@@ -44,7 +44,6 @@ jobs:
         app:
           - user_app
           - partner_app
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.app == 'both' || github.event.inputs.app == matrix.app }}
 
     steps:
       - name: Checkout
