@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/network/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,10 +17,40 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _orderTimer;
   bool _showOrderRequest = false;
 
+  // Live stats from backend
+  int _onlinePartnersCount = 0;
+  int _activeDeliveries = 0;
+  bool _loadingStats = true;
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+    // Refresh stats every 15 seconds while online
+    _refreshTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+      if (_online) _loadStats();
+    });
+  }
+
   @override
   void dispose() {
     _orderTimer?.cancel();
+    _refreshTimer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final res = await ApiService.instance.getOnlinePartners();
+      setState(() {
+        _onlinePartnersCount = (res['onlinePartners'] as List?)?.length ?? 0;
+        _activeDeliveries = (res['sessions'] as List?)?.length ?? 0;
+        _loadingStats = false;
+      });
+    } catch (_) {
+      setState(() => _loadingStats = false);
+    }
   }
 
   void _toggleOnline() {
@@ -50,6 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Home'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadStats,
+          ),
           IconButton(icon: const Icon(Icons.notifications_outlined), onPressed: () {}),
         ],
       ),
@@ -86,7 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _online ? 'Looking for delivery requests…' : 'Go online to start receiving orders',
+                        _online
+                            ? '$_onlinePartnersCount partners online · $_activeDeliveries active deliveries'
+                            : 'Go online to start receiving orders',
                         style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 13),
                       ),
                       const SizedBox(height: 16),
@@ -105,14 +144,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Today stats
+                // Today stats (mock for now — backend doesn't expose per-partner stats yet)
                 Row(
                   children: [
                     Expanded(child: _StatCard(label: 'Earnings', value: '₹1,250', icon: Icons.account_balance_wallet, color: const Color(0xFF10B981))),
                     const SizedBox(width: 12),
                     Expanded(child: _StatCard(label: 'Trips', value: '8', icon: Icons.inventory_2, color: const Color(0xFF0F766E))),
                     const SizedBox(width: 12),
-                    Expanded(child: _StatCard(label: 'Hours', value: '5.2', icon: Icons.access_time, color: const Color(0xFFF59E0B))),
+                    Expanded(child: _StatCard(label: 'Online', value: _onlinePartnersCount.toString(), icon: Icons.people, color: const Color(0xFFF59E0B))),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -121,18 +160,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('Recent Trips', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                    TextButton(onPressed: () {}, child: const Text('See all')),
+                    TextButton(
+                      onPressed: () => context.go('/orders'),
+                      child: const Text('See all'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      _TripItem(code: 'DP-DEMO001', from: 'MG Road', to: 'Brigade Road', amount: 89),
-                      _TripItem(code: 'DP-DEMO002', from: 'Indiranagar', to: 'Koramangala', amount: 220),
-                      _TripItem(code: 'DP-DEMO003', from: 'HSR Layout', to: 'Bellandur', amount: 89),
-                    ],
-                  ),
+                  child: _loadingStats
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView(
+                          children: [
+                            _TripItem(code: 'DP-DEMO001', from: 'MG Road', to: 'Brigade Road', amount: 89),
+                            _TripItem(code: 'DP-DEMO002', from: 'Indiranagar', to: 'Koramangala', amount: 220),
+                            _TripItem(code: 'DP-DEMO003', from: 'HSR Layout', to: 'Bellandur', amount: 89),
+                          ],
+                        ),
                 ),
               ],
             ),
@@ -151,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Order accepted! Navigate to pickup.')),
                   );
+                  context.go('/tracking');
                 },
                 onReject: () {
                   _orderTimer?.cancel();
@@ -168,7 +213,13 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), activeIcon: Icon(Icons.account_balance_wallet), label: 'Earnings'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
         ],
-        onTap: (i) {},
+        onTap: (i) {
+          switch (i) {
+            case 1: context.go('/orders'); break;
+            case 2: context.go('/earnings'); break;
+            case 3: context.go('/profile'); break;
+          }
+        },
       ),
     );
   }
@@ -194,7 +245,7 @@ class _StatCard extends StatelessWidget {
           Icon(icon, color: color, size: 18),
           const SizedBox(height: 6),
           Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-          Text(label, style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+          Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
         ],
       ),
     );

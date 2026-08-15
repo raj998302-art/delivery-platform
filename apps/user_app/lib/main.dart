@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'core/network/api_client.dart';
+import 'core/network/api_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Env vars are passed via --dart-define at build time, read via String.fromEnvironment in ApiConstants.
-  // No runtime .env file required.
-  ApiClient.instance.init();
+  // Env vars passed via --dart-define at build time, read via String.fromEnvironment.
+  ApiService.instance.init();
   runApp(const ProviderScope(child: DeliveryApp()));
 }
 
