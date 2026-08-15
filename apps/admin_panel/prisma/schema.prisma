@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -132,13 +132,13 @@ enum PackageType {
 // ----------------------------------------------------------------------------
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) @map("_id")
   phone         String    @unique
-  email         String?   @unique
+  email         String?
   passwordHash  String?
   name          String?
   role          UserRole  @default(CUSTOMER)
-  googleId      String?   @unique
+  googleId      String?
   isGuest       Boolean   @default(false)
   isBlocked     Boolean   @default(false)
   emailVerified DateTime?
@@ -154,18 +154,16 @@ model User {
   ratingsGiven  Rating[]          @relation("RatingFromUser")
   notifications Notification[]
   tickets       SupportTicket[]
-  wallet        Wallet?
+  wallets       Wallet[]
   refreshTokens RefreshToken[]
   otpRequests   OtpRequest[]
-  partner       Partner?
+  partners      Partner[]
 
-  @@index([phone])
-  @@index([role])
   @@map("users")
 }
 
 model UserProfile {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   firstName   String?
@@ -181,7 +179,7 @@ model UserProfile {
 }
 
 model UserAddress {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   label       String
@@ -197,12 +195,11 @@ model UserAddress {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([userId])
   @@map("user_addresses")
 }
 
 model RefreshToken {
-  id                 String   @id @default(cuid())
+  id                 String   @id @default(cuid()) @map("_id")
   userId             String
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   token              String   @unique
@@ -213,12 +210,11 @@ model RefreshToken {
   revokedAt          DateTime?
   createdAt          DateTime @default(now())
 
-  @@index([userId])
   @@map("refresh_tokens")
 }
 
 model OtpRequest {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @map("_id")
   userId       String?
   user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   phone        String
@@ -229,7 +225,6 @@ model OtpRequest {
   expiresAt    DateTime
   createdAt    DateTime @default(now())
 
-  @@index([phone])
   @@map("otp_requests")
 }
 
@@ -238,11 +233,11 @@ model OtpRequest {
 // ----------------------------------------------------------------------------
 
 model Partner {
-  id              String        @id @default(cuid())
-  userId          String?       @unique
+  id              String        @id @default(cuid()) @map("_id")
+  userId          String?
   user            User?         @relation(fields: [userId], references: [id])
   phone           String        @unique
-  email           String?       @unique
+  email           String?
   firstName       String
   lastName        String
   avatarUrl       String?
@@ -252,7 +247,7 @@ model Partner {
   acceptanceRate  Float         @default(0)
   completionRate  Float         @default(0)
   totalDeliveries Int           @default(0)
-  totalEarnings   Decimal       @default(0) @db.Decimal(12, 2)
+  totalEarnings   Float       @default(0)
   isOnline        Boolean       @default(false)
   currentLat      Float?
   currentLng      Float?
@@ -268,19 +263,16 @@ model Partner {
   assignments     PartnerAssignment[]
   orders          Order[]
   ratingsReceived Rating[]       @relation("RatingFromPartner")
-  wallet          Wallet?
+  wallets         Wallet[]
   notifications   Notification[]
   tickets         SupportTicket[]
   locationUpdates LocationUpdate[]
 
-  @@index([phone])
-  @@index([status])
-  @@index([isOnline])
   @@map("partners")
 }
 
 model PartnerProfile {
-  id             String   @id @default(cuid())
+  id             String   @id @default(cuid()) @map("_id")
   partnerId      String   @unique
   partner        Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   dob            DateTime?
@@ -299,7 +291,7 @@ model PartnerProfile {
 }
 
 model PartnerDocument {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   partnerId   String
   partner     Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   type        String
@@ -310,12 +302,11 @@ model PartnerDocument {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([partnerId])
   @@map("partner_documents")
 }
 
 model PartnerVehicle {
-  id                 String       @id @default(cuid())
+  id                 String       @id @default(cuid()) @map("_id")
   partnerId          String
   partner            Partner      @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   type               VehicleType
@@ -329,12 +320,11 @@ model PartnerVehicle {
 
   documents          PartnerVehicleDocument[]
 
-  @@index([partnerId])
   @@map("partner_vehicles")
 }
 
 model PartnerVehicleDocument {
-  id          String             @id @default(cuid())
+  id          String             @id @default(cuid()) @map("_id")
   vehicleId   String
   vehicle     PartnerVehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   type        String
@@ -351,7 +341,7 @@ model PartnerVehicleDocument {
 // ----------------------------------------------------------------------------
 
 model Service {
-  id            String      @id @default(cuid())
+  id            String      @id @default(cuid()) @map("_id")
   type          ServiceType @unique
   name          String
   description   String?
@@ -374,7 +364,7 @@ model Service {
 }
 
 model VehicleTypeConfig {
-  id           String      @id @default(cuid())
+  id           String      @id @default(cuid()) @map("_id")
   type         VehicleType @unique
   name         String
   icon         String?
@@ -390,13 +380,14 @@ model VehicleTypeConfig {
 }
 
 model ServiceVehicleType {
+  id               String            @id @default(cuid()) @map("_id")
   serviceId        String
   vehicleType      VehicleType
   service          Service            @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   vehicleTypeConf  VehicleTypeConfig  @relation(fields: [vehicleType], references: [type])
   createdAt        DateTime           @default(now())
 
-  @@id([serviceId, vehicleType])
+  @@unique([serviceId, vehicleType])
   @@map("service_vehicle_types")
 }
 
@@ -405,7 +396,7 @@ model ServiceVehicleType {
 // ----------------------------------------------------------------------------
 
 model Order {
-  id                 String         @id @default(cuid())
+  id                 String         @id @default(cuid()) @map("_id")
   code               String         @unique
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -455,15 +446,11 @@ model Order {
   tracking           TrackingSession?
   rating             Rating?
 
-  @@index([userId])
-  @@index([partnerId])
-  @@index([state])
-  @@index([createdAt])
   @@map("orders")
 }
 
 model OrderItem {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   orderId     String
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   name        String
@@ -475,7 +462,7 @@ model OrderItem {
 }
 
 model OrderStatusHistory {
-  id          String     @id @default(cuid())
+  id          String     @id @default(cuid()) @map("_id")
   orderId     String
   order       Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
   state       OrderState
@@ -483,12 +470,11 @@ model OrderStatusHistory {
   note        String?
   createdAt   DateTime   @default(now())
 
-  @@index([orderId])
   @@map("order_status_history")
 }
 
 model OrderLocation {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   orderId     String
   latitude    Float
   longitude   Float
@@ -496,12 +482,11 @@ model OrderLocation {
   speed        Float?
   recordedAt  DateTime @default(now())
 
-  @@index([orderId])
   @@map("order_locations")
 }
 
 model PartnerAssignment {
-  id           String           @id @default(cuid())
+  id           String           @id @default(cuid()) @map("_id")
   orderId      String
   order        Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
   partnerId    String
@@ -511,8 +496,6 @@ model PartnerAssignment {
   respondedAt  DateTime?
   createdAt    DateTime         @default(now())
 
-  @@index([orderId])
-  @@index([partnerId])
   @@map("partner_assignments")
 }
 
@@ -521,7 +504,7 @@ model PartnerAssignment {
 // ----------------------------------------------------------------------------
 
 model TrackingSession {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @map("_id")
   orderId      String   @unique
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   partnerId    String?
@@ -535,7 +518,7 @@ model TrackingSession {
 }
 
 model LocationUpdate {
-  id           String            @id @default(cuid())
+  id           String            @id @default(cuid()) @map("_id")
   sessionId    String?
   session      TrackingSession?  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   partnerId    String?
@@ -546,8 +529,6 @@ model LocationUpdate {
   speed        Float?
   recordedAt   DateTime          @default(now())
 
-  @@index([sessionId])
-  @@index([partnerId])
   @@map("location_updates")
 }
 
@@ -556,7 +537,7 @@ model LocationUpdate {
 // ----------------------------------------------------------------------------
 
 model PricingRule {
-  id              String       @id @default(cuid())
+  id              String       @id @default(cuid()) @map("_id")
   serviceId       String?
   vehicleType     VehicleType?
   baseFare        Int          @default(0)
@@ -576,7 +557,7 @@ model PricingRule {
 }
 
 model FareQuote {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   userId          String?
   serviceId       String
   vehicleType     VehicleType
@@ -598,12 +579,11 @@ model FareQuote {
   consumedAt      DateTime?
   createdAt       DateTime @default(now())
 
-  @@index([userId])
   @@map("fare_quotes")
 }
 
 model SurgeRule {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) @map("_id")
   serviceZoneId String?
   serviceId     String?
   multiplier    Float
@@ -618,7 +598,7 @@ model SurgeRule {
 }
 
 model ServiceZone {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   name        String   @unique
   city        String
   minLat      Float
@@ -637,7 +617,7 @@ model ServiceZone {
 // ----------------------------------------------------------------------------
 
 model Payment {
-  id              String         @id @default(cuid())
+  id              String         @id @default(cuid()) @map("_id")
   orderId         String
   order           Order          @relation(fields: [orderId], references: [id])
   amount          Int
@@ -645,22 +625,21 @@ model Payment {
   method          PaymentMethod
   status          PaymentStatus  @default(PENDING)
   provider        String?
-  providerTxnId   String?        @unique
+  providerTxnId   String?
   gatewayResponse Json?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  @@index([orderId])
   @@map("payments")
 }
 
 model Wallet {
-  id            String   @id @default(cuid())
-  userId        String?  @unique
+  id            String   @id @default(cuid()) @map("_id")
+  userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  partnerId     String?  @unique
+  partnerId     String?
   partner       Partner? @relation(fields: [partnerId], references: [id], onDelete: Cascade)
-  balance       Decimal  @default(0) @db.Decimal(12, 2)
+  balance       Float  @default(0)
   currency      String   @default("INR")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -672,25 +651,24 @@ model Wallet {
 }
 
 model WalletTransaction {
-  id            String        @id @default(cuid())
+  id            String        @id @default(cuid()) @map("_id")
   walletId      String
   wallet        Wallet        @relation(fields: [walletId], references: [id], onDelete: Cascade)
   type          WalletTxnType
-  amount        Decimal       @db.Decimal(12, 2)
-  balanceAfter  Decimal       @db.Decimal(12, 2)
+  amount        Float      
+  balanceAfter  Float      
   description   String?
   reference     String?
   createdAt     DateTime      @default(now())
 
-  @@index([walletId])
   @@map("wallet_transactions")
 }
 
 model WithdrawalRequest {
-  id          String            @id @default(cuid())
+  id          String            @id @default(cuid()) @map("_id")
   walletId    String
   wallet      Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  amount      Decimal           @db.Decimal(12, 2)
+  amount      Float          
   status      WithdrawalStatus  @default(PENDING)
   method      String            @default("UPI")
   reference   String?
@@ -706,7 +684,7 @@ model WithdrawalRequest {
 // ----------------------------------------------------------------------------
 
 model Coupon {
-  id            String    @id @default(cuid())
+  id            String    @id @default(cuid()) @map("_id")
   code          String    @unique
   description   String?
   type          String    @default("FLAT")
@@ -728,7 +706,7 @@ model Coupon {
 // ----------------------------------------------------------------------------
 
 model Rating {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   orderId     String   @unique
   order       Order    @relation(fields: [orderId], references: [id])
   fromUserId  String?
@@ -747,7 +725,7 @@ model Rating {
 // ----------------------------------------------------------------------------
 
 model Notification {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   partnerId String?
@@ -759,8 +737,6 @@ model Notification {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  @@index([userId])
-  @@index([partnerId])
   @@map("notifications")
 }
 
@@ -769,7 +745,7 @@ model Notification {
 // ----------------------------------------------------------------------------
 
 model SupportTicket {
-  id          String       @id @default(cuid())
+  id          String       @id @default(cuid()) @map("_id")
   code        String       @unique
   userId      String?
   user        User?        @relation(fields: [userId], references: [id])
@@ -786,13 +762,11 @@ model SupportTicket {
 
   messages    SupportMessage[]
 
-  @@index([userId])
-  @@index([partnerId])
   @@map("support_tickets")
 }
 
 model SupportMessage {
-  id            String         @id @default(cuid())
+  id            String         @id @default(cuid()) @map("_id")
   ticketId      String
   ticket        SupportTicket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   fromId        String
@@ -801,7 +775,6 @@ model SupportMessage {
   attachmentUrl String?
   createdAt     DateTime       @default(now())
 
-  @@index([ticketId])
   @@map("support_messages")
 }
 
@@ -810,7 +783,7 @@ model SupportMessage {
 // ----------------------------------------------------------------------------
 
 model AdminUser {
-  id           String   @id @default(cuid())
+  id           String   @id @default(cuid()) @map("_id")
   email        String   @unique
   passwordHash String
   name         String
@@ -824,7 +797,7 @@ model AdminUser {
 }
 
 model AuditLog {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   actorId     String?
   actorRole   String?
   action      String
@@ -835,8 +808,6 @@ model AuditLog {
   userAgent   String?
   createdAt   DateTime @default(now())
 
-  @@index([actorId])
-  @@index([entityType, entityId])
   @@map("audit_logs")
 }
 
@@ -845,7 +816,7 @@ model AuditLog {
 // ----------------------------------------------------------------------------
 
 model Setting {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   key       String   @unique
   value     String
   category  String   @default("GENERAL")
@@ -856,7 +827,7 @@ model Setting {
 }
 
 model FeatureFlag {
-  id              String   @id @default(cuid())
+  id              String   @id @default(cuid()) @map("_id")
   key             String   @unique
   name            String
   description     String?

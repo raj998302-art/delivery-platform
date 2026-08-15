@@ -66,7 +66,7 @@ export async function GET() {
     const allVts = await prisma.vehicleTypeConfig.findMany();
     for (const vt of allVts) {
       await prisma.serviceVehicleType.upsert({
-        where: { serviceId_vehicleType: { serviceId: svc.id, vehicleType: vt.type } },
+        where: { serviceId_vehicleType: { serviceId: svc.id, vehicleType: vt.type as any } },
         update: {},
         create: { serviceId: svc.id, vehicleType: vt.type },
       });
@@ -127,7 +127,7 @@ export async function GET() {
             isPrimary: true,
           }],
         },
-        wallet: { create: { balance: Math.floor(Math.random() * 5000) + 500 } },
+        wallets: { create: { balance: Math.floor(Math.random() * 5000) + 500 } },
       },
     });
     partnersCreated++;
@@ -150,7 +150,7 @@ export async function GET() {
         name: us.name,
         phoneVerified: new Date(),
         profile: { create: { firstName: us.name.split(' ')[0], lastName: us.name.split(' ')[1] } },
-        wallet: { create: { balance: 500 } },
+        wallets: { create: { balance: 500 } },
       },
     });
     usersCreated++;

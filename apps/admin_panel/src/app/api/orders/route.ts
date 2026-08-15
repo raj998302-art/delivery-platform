@@ -22,9 +22,9 @@ export async function GET(req: NextRequest) {
   if (state && state !== 'ALL') where.state = state;
   if (q) {
     where.OR = [
-      { code: { contains: q, mode: 'insensitive' } },
-      { pickupAddress: { contains: q, mode: 'insensitive' } },
-      { dropAddress: { contains: q, mode: 'insensitive' } },
+      { code: { contains: q } },
+      { pickupAddress: { contains: q } },
+      { dropAddress: { contains: q } },
     ];
   }
 

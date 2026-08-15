@@ -19,9 +19,9 @@ export async function GET(req: NextRequest) {
   const where: any = { deletedAt: null };
   if (q) {
     where.OR = [
-      { name: { contains: q, mode: 'insensitive' } },
-      { phone: { contains: q, mode: 'insensitive' } },
-      { email: { contains: q, mode: 'insensitive' } },
+      { name: { contains: q } },
+      { phone: { contains: q } },
+      { email: { contains: q } },
     ];
   }
 
