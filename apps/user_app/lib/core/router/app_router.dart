@@ -11,6 +11,7 @@ import '../../features/tracking/tracking_screen.dart';
 import '../../features/orders/orders_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/rating/rating_screen.dart';
+import '../../features/support/support_screen.dart';
 import '../constants/app_constants.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -26,6 +27,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: RoutePaths.orders, builder: (_, __) => const OrdersScreen()),
       GoRoute(path: RoutePaths.profile, builder: (_, __) => const ProfileScreen()),
       GoRoute(path: '/rating/:orderId', builder: (_, state) => RatingScreen(orderId: state.pathParameters['orderId']!)),
+      GoRoute(path: '/support', builder: (_, __) => const SupportScreen()),
     ],
     errorBuilder: (_, state) => Scaffold(
       body: Center(child: Text('Route not found: ${state.uri}')),

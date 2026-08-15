@@ -256,15 +256,38 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_showOrderOverlay)
               IncomingOrderOverlay(
                 order: _demoOrder,
-                onAccept: () {
+                onAccept: () async {
                   setState(() => _showOrderOverlay = false);
+                  // Try to accept via backend (if there's a real order)
+                  try {
+                    final orders = await ApiService.instance.getMyOrders(page: 1, pageSize: 5);
+                    final searchingOrder = (orders['orders'] as List?)?.firstWhere(
+                      (o) => o['state'] == 'SEARCHING_PARTNER',
+                      orElse: () => null,
+                    );
+                    if (searchingOrder != null) {
+                      await ApiService.instance.dio.post('/api/orders/${searchingOrder['id']}/accept');
+                    }
+                  } catch (_) {}
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Order accepted! Navigate to pickup.'), backgroundColor: Color(0xFF10B981)),
                   );
                   context.go('/tracking');
                 },
-                onReject: () {
+                onReject: () async {
                   setState(() => _showOrderOverlay = false);
+                  // Try to reject via backend
+                  try {
+                    final orders = await ApiService.instance.getMyOrders(page: 1, pageSize: 5);
+                    final searchingOrder = (orders['orders'] as List?)?.firstWhere(
+                      (o) => o['state'] == 'SEARCHING_PARTNER',
+                      orElse: () => null,
+                    );
+                    if (searchingOrder != null) {
+                      await ApiService.instance.dio.post('/api/orders/${searchingOrder['id']}/reject', data: {'reason': 'Partner declined'});
+                    }
+                  } catch (_) {}
                 },
               ),
           ],

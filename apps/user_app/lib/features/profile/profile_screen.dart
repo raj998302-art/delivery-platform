@@ -46,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
           _Section(
             title: 'Support',
             items: [
-              _Item(icon: Icons.help_outline, label: 'Help & support', onTap: () {}),
+              _Item(icon: Icons.help_outline, label: 'Help & support', onTap: () => context.go('/support')),
               _Item(icon: Icons.description_outlined, label: 'Terms & privacy', onTap: () {}),
               _Item(icon: Icons.logout, label: 'Logout', color: Colors.red, onTap: () {}),
             ],

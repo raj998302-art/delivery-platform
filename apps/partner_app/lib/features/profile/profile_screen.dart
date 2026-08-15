@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -37,12 +38,12 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _Section(title: 'Account', items: [
             _Item(icon: Icons.person_outline, label: 'Personal info', onTap: () {}),
-            _Item(icon: Icons.badge_outlined, label: 'KYC & documents', onTap: () {}),
+            _Item(icon: Icons.badge_outlined, label: 'KYC & documents', onTap: () => context.go('/kyc')),
             _Item(icon: Icons.two_wheeler_outlined, label: 'Vehicle details', onTap: () {}),
             _Item(icon: Icons.account_balance_outlined, label: 'Bank account', onTap: () {}),
           ]),
           _Section(title: 'Support', items: [
-            _Item(icon: Icons.help_outline, label: 'Help & support', onTap: () {}),
+            _Item(icon: Icons.help_outline, label: 'Help & support', onTap: () => context.go('/support')),
             _Item(icon: Icons.description_outlined, label: 'Terms & privacy', onTap: () {}),
             _Item(icon: Icons.logout, label: 'Logout', color: Colors.red, onTap: () {}),
           ]),

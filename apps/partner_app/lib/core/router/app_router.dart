@@ -9,6 +9,8 @@ import '../../features/orders/orders_screen.dart';
 import '../../features/tracking/tracking_screen.dart';
 import '../../features/earnings/earnings_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/support/support_screen.dart';
+import '../../features/kyc/kyc_screen.dart';
 import '../constants/app_constants.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -22,6 +24,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: RoutePaths.tracking, builder: (_, __) => const TrackingScreen()),
       GoRoute(path: RoutePaths.earnings, builder: (_, __) => const EarningsScreen()),
       GoRoute(path: RoutePaths.profile, builder: (_, __) => const ProfileScreen()),
+      GoRoute(path: '/support', builder: (_, __) => const SupportScreen()),
+      GoRoute(path: '/kyc', builder: (_, __) => const KycScreen()),
     ],
   );
 });
