@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   const pageSize = Number(searchParams.get('pageSize') || '20');
   const q = searchParams.get('q');
 
-  const where: any = { deletedAt: null };
+  const where: any = {};
   if (q) {
     where.OR = [
       { name: { contains: q } },

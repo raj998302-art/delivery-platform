@@ -33,7 +33,6 @@ export async function findNearbyPartners(
       isOnline: true,
       currentLat: { not: null },
       currentLng: { not: null },
-      deletedAt: null,
       ...(vehicleType
         ? { vehicles: { some: { type: vehicleType } } }
         : {}),
@@ -111,14 +110,13 @@ export async function dispatchOrder(orderId: string): Promise<RankedPartner[]> {
   const top = candidates.slice(0, 3);
   const expiresAt = new Date(Date.now() + 15 * 1000); // 15-second window
 
-  await prisma.partnerAssignment.createMany({
-    data: top.map((c) => ({
-      orderId,
-      partnerId: c.partnerId,
-      expiresAt,
-    })),
-    skipDuplicates: true,
-  });
+  await Promise.all(
+    top.map((c) =>
+      prisma.partnerAssignment.create({
+        data: { orderId, partnerId: c.partnerId, expiresAt },
+      })
+    )
+  );
 
   return top;
 }

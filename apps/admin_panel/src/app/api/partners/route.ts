@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get('status');
   const q = searchParams.get('q');
 
-  const where: any = { deletedAt: null };
+  const where: any = {};
   if (status && status !== 'ALL') where.status = status;
   if (q) {
     where.OR = [
