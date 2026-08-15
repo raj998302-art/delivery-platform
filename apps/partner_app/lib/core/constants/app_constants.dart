@@ -1,3 +1,11 @@
+class AppConstants {
+  AppConstants._();
+  static const appName = 'Partner';
+  static const appNameFull = 'Delivery Partner';
+  static const currency = 'INR';
+  static const currencySymbol = '₹';
+}
+
 class ApiConstants {
   ApiConstants._();
   static const String baseUrl = String.fromEnvironment(

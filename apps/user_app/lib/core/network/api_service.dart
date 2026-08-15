@@ -25,6 +25,7 @@ class ApiService {
   String? _accessToken;
 
   String? get accessToken => _accessToken;
+  Dio get dio => _dio;
 
   void init({String? baseUrl, String? apiKey}) async {
     final base = baseUrl ?? ApiConstants.baseUrl;
