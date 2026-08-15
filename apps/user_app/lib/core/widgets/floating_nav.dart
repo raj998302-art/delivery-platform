@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:haptic_feedback/haptic_feedback.dart';
 
 /// Floating glassmorphism bottom navigation bar.
 /// Sits above the content with a blur backdrop, rounded corners,
@@ -57,7 +57,7 @@ class _FloatingNavState extends State<FloatingNav> {
                   return Expanded(
                     child: GestureDetector(
                       onTap: () async {
-                        await HapticFeedback.light();
+                        await HapticFeedback.lightImpact();
                         widget.onTap(i);
                       },
                       child: Container(

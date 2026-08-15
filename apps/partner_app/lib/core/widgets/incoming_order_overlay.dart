@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import "package:flutter/services.dart";
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:haptic_feedback/haptic_feedback.dart';
+
 
 /// Full-screen incoming order overlay with sound + pulse animation.
 /// Covers the entire screen when a new order comes in, plays a sound,
@@ -68,9 +69,9 @@ class _IncomingOrderOverlayState extends State<IncomingOrderOverlay>
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       setState(() => _secondsLeft--);
-      HapticFeedback.light();
+      HapticFeedback.lightImpact();
       if (_secondsLeft <= 5) {
-        HapticFeedback.heavy();
+        HapticFeedback.heavyImpact();
       }
       if (_secondsLeft <= 0) {
         t.cancel();
@@ -339,7 +340,7 @@ class _IncomingOrderOverlayState extends State<IncomingOrderOverlay>
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                HapticFeedback.heavy();
+                                HapticFeedback.heavyImpact();
                                 widget.onReject();
                               },
                               borderRadius: BorderRadius.circular(16),
@@ -379,7 +380,7 @@ class _IncomingOrderOverlayState extends State<IncomingOrderOverlay>
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                HapticFeedback.heavy();
+                                HapticFeedback.heavyImpact();
                                 widget.onAccept();
                               },
                               borderRadius: BorderRadius.circular(16),

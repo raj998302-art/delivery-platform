@@ -55,7 +55,6 @@ dependencies:
   logger: ^2.4.0
   url_launcher: ^6.3.0
   image_picker: ^1.1.2
-  haptic_feedback: ^0.5.1+1
 
 dev_dependencies:
   flutter_test:
