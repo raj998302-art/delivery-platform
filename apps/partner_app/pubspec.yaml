@@ -1,7 +1,7 @@
 name: partner_app
 description: Delivery Partner app for the Delivery Platform — accept orders, navigate, track earnings.
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -21,12 +21,16 @@ dependencies:
   shared_preferences: ^2.3.2
   google_maps_flutter: ^2.9.0
   geolocator: ^13.0.1
+  permission_handler: ^11.3.1
   socket_io_client: ^2.0.3+1
   flutter_svg: ^2.0.10
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   lottie: ^3.1.2
   flutter_animate: ^4.5.0
+  google_fonts: ^6.2.1
+  audioplayers: ^6.1.0
+  haptic_feedback: ^0.5.1+1
   intl: ^0.19.0
   logger: ^2.4.0
   url_launcher: ^6.3.0
@@ -44,3 +48,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/sounds/

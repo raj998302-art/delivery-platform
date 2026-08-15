@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
@@ -10,6 +10,7 @@ import '../../features/booking/booking_screen.dart';
 import '../../features/tracking/tracking_screen.dart';
 import '../../features/orders/orders_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/rating/rating_screen.dart';
 import '../constants/app_constants.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -24,6 +25,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: RoutePaths.tracking, builder: (_, __) => const TrackingScreen()),
       GoRoute(path: RoutePaths.orders, builder: (_, __) => const OrdersScreen()),
       GoRoute(path: RoutePaths.profile, builder: (_, __) => const ProfileScreen()),
+      GoRoute(path: '/rating/:orderId', builder: (_, state) => RatingScreen(orderId: state.pathParameters['orderId']!)),
     ],
     errorBuilder: (_, state) => Scaffold(
       body: Center(child: Text('Route not found: ${state.uri}')),
