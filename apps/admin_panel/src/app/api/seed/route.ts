@@ -12,7 +12,7 @@ export async function GET() {
   // 0. Clean up existing demo data (non-destructive to admin users)
   await prisma.order.deleteMany({ where: { code: { startsWith: 'DP-' } } });
   await prisma.partner.deleteMany({});
-  await prisma.user.deleteMany({ where: { phone: { startsWith: '+9199' } } });
+  await prisma.user.deleteMany({ where: { phone: { contains: '99000' } } });
   await prisma.fareQuote.deleteMany({});
   results.push('Cleaned up existing demo data');
 
