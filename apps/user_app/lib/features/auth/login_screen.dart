@@ -93,9 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 _otpSent ? 'Verify OTP' : 'Enter your phone',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
               Text(
